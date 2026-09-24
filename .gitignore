@@ -1,0 +1,10 @@
+# Local configuration and temporary files
+.env
+.env.*
+node_modules/
+*.log
+*.zip
+.DS_Store
+Thumbs.db
+.vscode/
+work/
