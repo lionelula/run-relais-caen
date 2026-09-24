@@ -1,13 +1,15 @@
 # Run Relais — Caen et Caen la Mer
 
-Prototype de carte pour repérer les cafés, commerces et services utiles le long d’un trajet à pied.
+Prototype de réseau local pour les sportifs et les professionnels qui les accompagnent à Caen et Caen la Mer. La carte permet déjà de repérer les cafés, commerces et services utiles le long d’un trajet à pied.
 
 ## Fonctionnalités
 
-- Itinéraires piétons entre deux points, via Valhalla.
+- Itinéraires piétons avec départ, étapes intermédiaires ordonnées et arrivée, via Valhalla.
 - Relevé régional de lieux OpenStreetMap, filtré localement autour du trajet.
 - Onze catégories de lieux combinables, sans plafond d’affichage.
-- Pages distinctes pour les coureurs et les professionnels.
+- Accueil multisport, pages distinctes pour les sportifs et les professionnels.
+- Aperçus de compte sportif et professionnel, sans authentification ni données enregistrées.
+- Formules sportifs Curieux, Adhérent et Développeur ; offres professionnelles sur une page séparée.
 - Aucun compte, paiement, formulaire envoyé ou backend.
 
 ## Lancer le site localement
@@ -19,7 +21,7 @@ Depuis ce dossier, avec Python installé :
 python -m http.server 8765 --bind 127.0.0.1
 ```
 
-Ouvrir ensuite http://127.0.0.1:8765/index.html.
+Ouvrir ensuite http://127.0.0.1:8765/accueil.html. La carte conserve son URL http://127.0.0.1:8765/index.html.
 Une connexion Internet est nécessaire pour Leaflet, les tuiles OpenStreetMap, Valhalla et les polices. Le relevé des lieux est fourni dans le dépôt.
 
 ## Fichiers principaux
@@ -27,13 +29,37 @@ Une connexion Internet est nécessaire pour Leaflet, les tuiles OpenStreetMap, V
 - `index.html`, `map.js` : carte et interface.
 - `routing.js` : calcul des itinéraires piétons.
 - `nearby.js`, `nearby-snapshot.json` : lieux et filtres.
-- `abonnements.html` : présentation destinée aux coureurs.
-- `partenaires.html`, `professionnels.css`, `professionnels.js` : présentation professionnelle.
+- `accueil.html` : présentation multisport du réseau local.
+- `abonnements.html` : présentation destinée aux sportifs.
+- `partenaires.html`, `professionnels.css`, `professionnels.js` : présentation professionnelle sans tarifs.
+- `offres-partenaires.html` : Visible, Recommandé et Référence sur demande.
+- `connexion.html`, `compte.html` : orientation vers les aperçus sans connexion simulée.
+- `compte-sportif.html`, `compte-professionnel.html`, `comptes.js` : espaces de démonstration.
+- `plateforme.css` : extension du design et navigation adaptative.
+- `architecture/` : contrats de données, catalogue de formules et feuille de route des phases futures.
 - `styles.css` : styles communs.
 
 Les données OpenStreetMap sont attribuées à leurs contributeurs sous licence ODbL 1.0. Le relevé conserve la requête source, l’emprise et la date des données. Voir les précisions ci-dessous.
 
-## Parcours professionnels — évolution du 24 septembre 2026
+## Plateforme sportifs — phase 1 du 24 septembre 2026
+
+Le vocabulaire générique est désormais « sportifs » ; le nom Run Relais Caen est conservé. Les comptes, paiements, statistiques, favoris et parcours enregistrés sont explicitement annoncés comme prévus. Les choix d’activités et de services dans les aperçus disparaissent au rechargement. Aucune saisie personnelle, authentification ou souscription n’est simulée. Les 1 715 lieux, les filtres existants et le calcul piéton sont conservés.
+
+Les tarifs professionnels n’apparaissent que sur `offres-partenaires.html`, accessible depuis le parcours professionnel. Cette séparation est éditoriale, sans restriction d’accès technique. Le lien de revendication dans les fiches de lieux ouvre un aperçu contextuel : aucune demande n’est créée. Voir [l’architecture cible](architecture/README.md) pour la validation des établissements, services, droits et futurs paiements.
+
+Les sections ci-dessous documentent l’historique du prototype ; la présente section et l’architecture cible décrivent l’état courant.
+
+Validation de cette phase : les 22 tests existants de carte, routage et couverture passent ; les 9 pages HTML et leurs 150 liens/ressources locaux sont vérifiés. Les aperçus ont été contrôlés dans le navigateur (activités multiples, services non vérifiés, contexte de revendication et remise à zéro au rechargement). À 390 px, les 9 pages restent sans débordement horizontal. Aucune mise à jour GitHub n’est incluse dans cette validation locale.
+
+## Trajets à étapes et rayon de 50 m
+
+Le planificateur permet désormais d’ajouter plusieurs étapes entre A et B par clic sur la carte ou depuis une fiche de lieu (« Ajouter comme étape »). Chaque étape peut être déplacée sur la carte, remontée, descendue ou supprimée. Le parcours est recalculé après chaque modification. Inverser le trajet inverse aussi l’ordre des étapes. Les boucles revenant au départ sont possibles avec des étapes distinctes ; deux points consécutifs identiques sont refusés.
+
+Chaque point est envoyé au moteur dans l’ordre choisi, en mode piéton avec des arrêts `break`. La réponse doit contenir tous les tronçons raccordés ; aucune ligne droite de remplacement n’est créée. Le cache inclut toutes les étapes et leur ordre. Les lieux sont recherchés le long du tracé complet. Le nouveau rayon de 50 m s’ajoute à 100, 250 et 500 m, sans nouveau téléchargement des données régionales lors d’un changement de rayon. Ces distances restent mesurées à vol d’oiseau par rapport au tracé.
+
+Référence du protocole : [documentation Valhalla — locations et trip legs](https://valhalla.github.io/valhalla/api/route/api-reference/). Validation : 26 tests passent, dont les nouveaux contrôles de l’ordre des étapes, des boucles, des réponses incomplètes ou discontinues et du filtrage à 50 m sur plusieurs tronçons.
+
+## Historique : parcours professionnels avant l’évolution multisport
 
 La page existante partenaires.html est désormais une présentation commerciale dédiée aux professionnels, accessible par le lien discret « Professionnels » et par l’encart public « Vous êtes un professionnel ? ». Elle reste accessible sans authentification ; cette séparation éditoriale ne constitue pas une restriction d’accès.
 
