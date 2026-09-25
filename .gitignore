@@ -8,3 +8,5 @@ node_modules/
 Thumbs.db
 .vscode/
 work/
+# Future private documents stay outside the public site.
+private-plans/

@@ -128,3 +128,8 @@ Validation régionale : six tests supplémentaires vérifient la couverture des 
 Validation de l’affichage sans plafond : trois tests supplémentaires couvrent 120 marqueurs sur un tracé synthétique de plus de 10 km, la liste au-delà du 40e résultat et jusqu’au dernier, l’union de catégories, la remise à zéro, l’absence de résultats et la conservation des catégories dans le relevé régional et les réponses en ligne. Total : 22 tests réussis.
 
 Validation : sept tests supplémentaires sur la distance au milieu et aux extrémités d’un trajet, le filtrage par rayon, le tri, les objets OSM et leurs centres, les doublons, les accès privés, les réponses partielles, le cache et la fusion de secteurs sur un trajet de plusieurs kilomètres. Dans le navigateur : résultats réels, filtres, réduction du rayon, source d’un point d’eau et recalcul vers ce lieu (228 m observés). Aucun partenariat n’est déduit de la présence dans OpenStreetMap.
+## Bibliothèque running — 25 septembre 2026
+
+La page `plans-entrainement.html` présente les huit plans fournis, filtrables par distance et niveau. Elle est reliée à l'accueil, à la page Sportifs et à la rubrique « Mes plans » de l'aperçu du compte sportif.
+
+Sur demande explicite de l'utilisateur, les huit PDF sont publiés en accès libre sur GitHub et téléchargeables depuis le catalogue, sans compte ni abonnement. Cette décision remplace la répartition initiale réservée aux abonnés. Les comptes et paiements restent non activés.
