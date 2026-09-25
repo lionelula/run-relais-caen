@@ -3,68 +3,12 @@
   "availability": "planned",
   "paymentsEnabled": false,
   "plans": [
-    {
-      "id": "curieux",
-      "userType": "sportif",
-      "label": "Curieux",
-      "amountCents": 0,
-      "currency": "EUR",
-      "period": "free",
-      "providerPriceId": null
-    },
-    {
-      "id": "adherent",
-      "userType": "sportif",
-      "label": "Adhérent",
-      "amountCents": 490,
-      "currency": "EUR",
-      "period": "month",
-      "providerPriceId": null
-    },
-    {
-      "id": "developpeur",
-      "userType": "sportif",
-      "label": "Développeur",
-      "amountCents": 890,
-      "currency": "EUR",
-      "period": "month",
-      "providerPriceId": null
-    },
-    {
-      "id": "discovery",
-      "userType": "professionnel",
-      "label": "Découverte",
-      "amountCents": 0,
-      "currency": "EUR",
-      "period": "free",
-      "providerPriceId": null
-    },
-    {
-      "id": "visible",
-      "userType": "professionnel",
-      "label": "Visible",
-      "amountCents": 1900,
-      "currency": "EUR",
-      "period": "month",
-      "providerPriceId": null
-    },
-    {
-      "id": "recommended",
-      "userType": "professionnel",
-      "label": "Recommandé",
-      "amountCents": 4900,
-      "currency": "EUR",
-      "period": "month",
-      "providerPriceId": null
-    },
-    {
-      "id": "reference",
-      "userType": "professionnel",
-      "label": "Référence",
-      "amountCents": null,
-      "currency": "EUR",
-      "period": "custom",
-      "providerPriceId": null
-    }
+    {"id":"curieux","userType":"sportif","label":"Curieux","amountCents":0,"currency":"EUR","period":"free","providerPriceId":null},
+    {"id":"adherent","userType":"sportif","label":"Adhérent","amountCents":490,"currency":"EUR","period":"month","providerPriceId":null},
+    {"id":"developpeur","userType":"sportif","label":"Développeur","amountCents":890,"currency":"EUR","period":"month","providerPriceId":null},
+    {"id":"discovery","userType":"professionnel","label":"Découverte","amountCents":0,"currency":"EUR","period":"free","providerPriceId":null},
+    {"id":"visible","userType":"professionnel","label":"Visible","amountCents":1900,"currency":"EUR","period":"month","providerPriceId":null},
+    {"id":"recommended","userType":"professionnel","label":"Recommandé","amountCents":4900,"currency":"EUR","period":"month","providerPriceId":null},
+    {"id":"reference","userType":"professionnel","label":"Référence","amountCents":null,"currency":"EUR","period":"custom","providerPriceId":null}
   ]
 }
