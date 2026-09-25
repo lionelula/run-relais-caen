@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "availability": "available",
+  "downloadsEnabled": true,
+  "plans": [
+    {
+      "id": "10km-debutant",
+      "distance": "10 km",
+      "level": "Débutant",
+      "weeks": 8,
+      "sessionsPerWeek": 3,
+      "prerequisite": "Pouvoir courir 20 minutes sans t'arrêter, même lentement.",
+      "access": "public",
+      "downloadPath": "Run_Relais_10km_Debutant.pdf"
+    },
+    {
+      "id": "10km-amateur",
+      "distance": "10 km",
+      "level": "Amateur",
+      "weeks": 8,
+      "sessionsPerWeek": 4,
+      "prerequisite": "Courir 2 à 3 fois par semaine et avoir déjà couru 10 km (ou tenir 40 minutes sans difficulté).",
+      "access": "public",
+      "downloadPath": "Run_Relais_10km_Amateur.pdf"
+    },
+    {
+      "id": "15km-debutant",
+      "distance": "15 km",
+      "level": "Débutant",
+      "weeks": 10,
+      "sessionsPerWeek": 3,
+      "prerequisite": "Pouvoir courir 30 minutes sans t'arrêter.",
+      "access": "public",
+      "downloadPath": "Run_Relais_15km_Debutant.pdf"
+    },
+    {
+      "id": "15km-amateur",
+      "distance": "15 km",
+      "level": "Amateur",
+      "weeks": 10,
+      "sessionsPerWeek": 4,
+      "prerequisite": "Avoir déjà couru 10 km et courir 3 fois par semaine depuis au moins 2 mois.",
+      "access": "public",
+      "downloadPath": "Run_Relais_15km_Amateur.pdf"
+    },
+    {
+      "id": "semi-debutant",
+      "distance": "Semi-marathon",
+      "level": "Débutant",
+      "weeks": 12,
+      "sessionsPerWeek": 3,
+      "prerequisite": "Pouvoir courir 45 minutes sans t'arrêter, ou avoir déjà terminé un 10 km.",
+      "access": "public",
+      "downloadPath": "Run_Relais_Semi_Debutant.pdf"
+    },
+    {
+      "id": "semi-amateur",
+      "distance": "Semi-marathon",
+      "level": "Amateur",
+      "weeks": 12,
+      "sessionsPerWeek": 4,
+      "prerequisite": "Avoir déjà couru 10 km et courir 3 fois par semaine depuis au moins 3 mois.",
+      "access": "public",
+      "downloadPath": "Run_Relais_Semi_Amateur.pdf"
+    },
+    {
+      "id": "marathon-debutant",
+      "distance": "Marathon",
+      "level": "Débutant",
+      "weeks": 16,
+      "sessionsPerWeek": 3,
+      "prerequisite": "Avoir déjà terminé un semi-marathon (ou courir 1 h en continu) et courir 3 fois par semaine depuis au moins 3 mois.",
+      "access": "public",
+      "downloadPath": "Run_Relais_Marathon_Debutant.pdf"
+    },
+    {
+      "id": "marathon-amateur",
+      "distance": "Marathon",
+      "level": "Amateur",
+      "weeks": 16,
+      "sessionsPerWeek": 4,
+      "prerequisite": "Avoir déjà terminé un semi-marathon et courir 4 fois par semaine depuis plusieurs mois (30 à 40 km par semaine).",
+      "access": "public",
+      "downloadPath": "Run_Relais_Marathon_Amateur.pdf"
+    }
+  ],
+  "access": "public"
+}

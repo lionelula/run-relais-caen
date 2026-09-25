@@ -36,6 +36,16 @@ Les offres et campagnes ont leurs dates, conditions, territoire et validation. D
 
 Un identifiant de territoire relie utilisateurs, établissements, parcours et campagnes. Le lancement reste Caen / Caen la Mer. L’emprise cartographique existante reste une couverture opérationnelle incluant des communes voisines, pas une frontière administrative. D’autres territoires nécessiteront leurs propres données sourcées et une validation locale.
 
+## Bibliothèque de plans running
+
+`plans-entrainement.html` présente huit programmes avec filtres par distance et niveau. Les liens d'entrée sont sur l'accueil, les formules sportifs et l'aperçu du compte sportif. Les huit PDF sont publiés à la racine et proposés en téléchargement direct.
+
+Décision explicite de l'utilisateur du 25 septembre 2026 : publier aussi les huit PDF publiquement sur GitHub. Elle remplace la répartition initiale réservée à Adhérent et Développeur. Tous les visiteurs peuvent télécharger ces plans sans compte ni abonnement. `training-plans.json` expose `access: public`, `downloadsEnabled: true` et les chemins publics. Les plans ne constituent donc plus un avantage exclusif des formules payantes. Les comptes et paiements restent non activés.
+
+Sources : huit PDF fournis par l'utilisateur, niveaux Débutant et Amateur sur 10 km, 15 km, semi-marathon et marathon. Refonte graphique uniquement ; aucune validation médicale ou sportive indépendante n'est revendiquée.
+
+De futurs contenus réellement réservés aux abonnés nécessiteront un stockage privé et une vérification des droits côté serveur. Ne pas réutiliser les liens publics comme contrôle d'accès.
+
 ## Source des choix
 
 Spécification utilisateur « ÉVOLUTION MAJEURE DU PROJET — RUN RELAIS → PLATEFORME POUR SPORTIFS », fournie le 24 septembre 2026. Les services, prix, phases et termes sont des choix de produit demandés, pas des offres commerciales déjà actives.
