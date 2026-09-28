@@ -1,5 +1,7 @@
 # Architecture cible — réseau local pour sportifs
 
+Évolution du 25 septembre : le [compagnon sportif local](compagnon-sportif.md) remplace l'aperçu sportif par un espace persistant dans le navigateur. Il reste sans compte ni serveur. Les paragraphes de phase 1 ci-dessous décrivent l'étape antérieure ; consulter cette évolution et `sport-domain.d.ts` pour l'état actuel du sportif. Les prix restent inchangés.
+
 Cette spécification prépare les phases 2 à 5. Elle n’est ni un backend, ni une authentification, ni une intégration Stripe. Les interfaces TypeScript ne sont pas chargées par le site. `plans.json` décrit le catalogue prévu ; les montants sont exprimés en centimes. Aucun identifiant de paiement ni secret n’est configuré.
 
 ## Phase 1 livrée
