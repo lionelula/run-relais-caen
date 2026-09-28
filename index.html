@@ -18,7 +18,7 @@
     <p class="route-caption">Temps de marche estimé à 5 km/h. Points raccordés aux accès piétons les plus proches.</p>
     <details class="route-directions"><summary>Voir les indications</summary><ol id="route-steps"></ol></details>
     <button type="button" id="show-route" class="text-button">Voir tout le trajet ↗</button>
-    <button type="button" id="jump-nearby" class="text-button">Voir les lieux proches ↓</button>
+    <button type="button" id="save-local-route" class="text-button" disabled>Enregistrer le parcours sur cet appareil</button><p id="local-route-status" class="nearby-note" role="status">Enregistrement local, sans compte ni synchronisation.</p><a id="after-route" class="text-button" href="apres-sortie.html" hidden>Après ma sortie, près de l’arrivée →</a><button type="button" id="jump-nearby" class="text-button">Voir les lieux proches ↓</button>
   </div>
   <p class="route-source">Calcul <a href="https://valhalla.openstreetmap.de/" target="_blank" rel="noreferrer">Valhalla</a> · données © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>. Les accès peuvent évoluer sur place.</p>
 </section><section class="nearby-section" aria-labelledby="nearby-title">
@@ -52,5 +52,5 @@
   <div><p class="eyebrow">POUR LES ÉTABLISSEMENTS LOCAUX</p><h2 id="professional-title">Vous êtes un professionnel ?</h2><p>Faites découvrir votre établissement aux sportifs de Caen et de Caen la Mer.</p></div>
   <div><p>Le futur réseau partenaires prévoit :</p><ul><li>Une présence sur la carte et une visibilité locale</li><li>La mise en avant de vos services</li><li>Des offres pour les sportifs et des opérations spéciales</li><li>Des statistiques de visibilité à terme</li></ul><a class="button lime" href="partenaires.html">Découvrir le réseau professionnel <span aria-hidden="true">→</span></a></div>
 </section>
-<footer><a class="brand" href="accueil.html"><b>RUN</b> RELAIS <small>CAEN</small></a><p>Caen / Caen la Mer · Prototype : comptes et paiements non activés.</p></footer><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script><script src="routing.js"></script><script src="nearby.js"></script><script src="map.js"></script></body></html>
+<footer><a class="brand" href="accueil.html"><b>RUN</b> RELAIS <small>CAEN</small></a><p>Caen / Caen la Mer · Prototype : comptes et paiements non activés.</p></footer><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script><script src="routing.js"></script><script src="nearby.js"></script><script src="sport-core.js"></script><script src="sport-map.js"></script><script src="map.js"></script></body></html>
 

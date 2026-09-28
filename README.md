@@ -4,11 +4,16 @@ Prototype de réseau local pour les sportifs et les professionnels qui les accom
 
 ## Fonctionnalités
 
+- Compagnon sportif local : questionnaire running, plan adapté, séances cochées, profil multisport, objectifs et sorties manuelles.
+- Lieux et parcours favoris sur cet appareil, carte « Après ma sortie » sur les données existantes.
+- Brouillons privés de sorties collectives et défis personnels calculés sur les activités saisies ; aucun événement, participant ou avantage partenaire fictif.
+- Voir [l'état détaillé et les limites](architecture/compagnon-sportif.md) ; les données restent dans le navigateur, exportables et effaçables, sans compte ni synchronisation.
+
 - Itinéraires piétons avec départ, étapes intermédiaires ordonnées et arrivée, via Valhalla.
 - Relevé régional de lieux OpenStreetMap, filtré localement autour du trajet.
 - Onze catégories de lieux combinables, sans plafond d’affichage.
 - Accueil multisport, pages distinctes pour les sportifs et les professionnels.
-- Aperçus de compte sportif et professionnel, sans authentification ni données enregistrées.
+- Espace sportif avec stockage local et aperçu professionnel sans enregistrement ; aucune authentification.
 - Formules sportifs Curieux, Adhérent et Développeur ; offres professionnelles sur une page séparée.
 - Aucun compte, paiement, formulaire envoyé ou backend.
 
@@ -133,3 +138,11 @@ Validation : sept tests supplémentaires sur la distance au milieu et aux extré
 La page `plans-entrainement.html` présente les huit plans fournis, filtrables par distance et niveau. Elle est reliée à l'accueil, à la page Sportifs et à la rubrique « Mes plans » de l'aperçu du compte sportif.
 
 Sur demande explicite de l'utilisateur, les huit PDF sont publiés en accès libre sur GitHub et téléchargeables depuis le catalogue, sans compte ni abonnement. Cette décision remplace la répartition initiale réservée aux abonnés. Les comptes et paiements restent non activés.
+
+## Compagnon sportif local — 25 septembre 2026
+
+Le nouvel espace sportif remplace son ancien aperçu : profil, objectifs, questionnaire, programme running adapté, suivi des séances, sorties manuelles, favoris et défis personnels. Les cinq vues principales sont `compte-sportif.html`, `questionnaire.html`, `mon-plan.html`, `apres-sortie.html` et `communaute.html`. [Architecture et limites](architecture/compagnon-sportif.md).
+
+Les séances cochées ne créent pas de kilomètres fictifs. Les défis se basent sur les sorties réellement saisies. Les événements restent des brouillons privés sur l'appareil, sans inscription ni publication. Aucune offre partenaire inventée, aucune récupération GPS. Les données personnelles ne sont jamais envoyées par ces formulaires ; elles restent dans le navigateur et sont exportables/effaçables.
+
+Vérification locale : 34 tests passent (8 nouveaux contrôles du domaine sportif et 26 contrôles existants de carte/routage), 14 pages et 298 liens/ressources valides. Les cinq vues sportives sont contrôlées à 390 px sans débordement horizontal. Génération/adoption, rechargement des séances cochées, saisie liée, défi et favori ont été testés dans le navigateur sur une origine de test séparée. Tests du domaine reproductibles : `node --test sport.test.cjs`.

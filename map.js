@@ -117,6 +117,7 @@ function showEndpointMarkers(coordinates) {
 }
 
 function invalidateRoute() {
+  window.dispatchEvent(new CustomEvent('run-relais-route-clear'));
   clearNearby();
   requestNumber += 1;
   if (requestController) requestController.abort();
@@ -186,6 +187,7 @@ async function calculateRoute() {
       return item;
     }));
     routeResult.hidden = false;
+    window.dispatchEvent(new CustomEvent('run-relais-route-ready', {detail:{stops:routeCoordinates(),coordinates:route.points,kilometers:route.kilometers,routingProfile:'pedestrian'}}));
     setRouteStatus(`Trajet piéton calculé${via.length ? ` avec ${via.length} étape${via.length > 1 ? 's' : ''}` : ''} · suis la ligne verte.`);
     fitRoute();
     loadNearby(route.points);
@@ -437,6 +439,19 @@ document.querySelector('#more-places').addEventListener('click', () => { visible
 document.querySelector('#all-places').addEventListener('click', () => { visiblePlaceCount = listedPlaces.length; renderPlaceList(); });
 document.querySelector('#retry-nearby').addEventListener('click', () => { if (nearbyLine) loadNearby(nearbyLine); });
 document.querySelector('#recenter-map').addEventListener('click', () => map.flyTo(caenCenter, 15, { duration: 0.8 }));
+// Restore only valid user-saved pedestrian stops, then recalculate with the normal engine.
+const savedRouteId = new URLSearchParams(location.search).get('route');
+if (savedRouteId && window.RunSport) {
+  try {
+    const saved = RunSport.createStore(localStorage).read().favorites.find(f => f.id === savedRouteId && f.kind === 'route');
+    const stops = saved?.stops;
+    if (Array.isArray(stops) && stops.length >= 2 && stops.length <= 50 && stops.every(p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite) && p[0] >= caenLaMerArea.south && p[0] <= caenLaMerArea.north && p[1] >= caenLaMerArea.west && p[1] <= caenLaMerArea.east)) {
+      routePoints.start = {coordinates:stops[0],id:null};
+      routePoints.end = {coordinates:stops.at(-1),id:null};
+      routeWaypoints.push(...stops.slice(1,-1).map(coordinates => ({coordinates,id:null})));
+    }
+  } catch { /* An unavailable local store does not block the existing map. */ }
+}
 updateSelects();
 // Load the regional extract once; route changes then filter locally without
 // waiting for Overpass. Online search is retained outside the extract bounds.
