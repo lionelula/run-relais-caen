@@ -6,6 +6,7 @@ export interface SportProfile extends AthleteProfile {
   mainSport: Sport;
   level: 'beginner' | 'regular' | 'experienced';
   availableSessions: number;
+  trainingDays?: number[]; // 0 = Sunday ... 6 = Saturday; legacy profiles may omit this.
   preferences: string;
 }
 export interface Goal {id: string; userId: string; sport: Sport; title: string; date: string; distance: number | null; planId?: string}
@@ -20,6 +21,7 @@ export interface TrainingPlan {
   sport: Sport; objective: string; targetDate: string; targetMinutes: number | null;
   priority: 'finish' | 'improve' | 'performance'; startDate: string; duration: number;
   sessionsPerWeek: number; createdAt: string; notes: string[];
+  trainingDays?: number[] | null; // Actual selected subset; race date is an exception.
   weeks: {number: number; kind: 'build' | 'recovery' | 'taper' | 'event'; plannedMinutes: number; workouts: Workout[]}[];
   // Completion is derived from workouts, never from elapsed time alone.
 }

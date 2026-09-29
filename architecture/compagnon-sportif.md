@@ -8,6 +8,10 @@ Les huit PDF sont désormais publics sur demande explicite du propriétaire. Leu
 
 ## Fonctionnel sans backend
 
+- Navigation du 28 septembre : accueil avec trois entrées parcours / entraînement / après-sortie, accès direct à Mon espace, barre fixe à quatre destinations sur mobile. Les pages et les tarifs existants sont conservés.
+- Questionnaire : sélection exacte de 2 à 5 jours de semaine. Le générateur retient un sous-ensemble réparti si la pratique actuelle limite le nombre de séances ; les jours retenus sont expliqués. La date de course reste prioritaire, les séances au-delà de l'échéance sont retirées. Les anciens plans ne sont pas recalculés et restent lisibles. `trainingDays` est facultatif dans les anciens enregistrements ; le nouvel algorithme s'identifie par `local-general-v2-days`.
+- Carte : proposition d'une boucle de 2 à 20 km souhaités, direction facultative. Au plus quatre essais séquentiels utilisent le moteur piéton existant, avec deux étapes intermédiaires et retour au départ. Les points candidats ne sont jamais affichés comme un tracé. La longueur affichée vient du service ; un écart supérieur à 20 % est signalé. Une boucle peut partager des portions aller/retour et sa praticabilité dépend des données et des accès sur place. Aucune promesse de distance exacte, de parcours inédit ou de revêtement particulier. Modification des étapes et enregistrement local conservés.
+
 - Questionnaire progressif running, validation des réponses et aperçu avant adoption. Les autres sports peuvent être enregistrés dans le profil, mais aucun programme n'est inventé pour eux.
 - Programme déterministe fondé sur le volume actuel, la sortie habituelle et maximale, la fréquence réellement pratiquée, les créneaux disponibles, le niveau, la priorité et le délai. Le chrono est conservé comme souhait, avec signalement s'il exige une allure plus rapide qu'une référence récente ; il n'impose pas une vitesse d'entraînement. Les règles ne sont pas une évaluation de santé ni une validation d'entraîneur.
 - Plan actif, semaine au calendrier, progression basée sur les seules cases cochées, séances restantes et prochaines. Les séances passées non cochées sont signalées sans proposition de rattrapage.
@@ -17,6 +21,9 @@ Les huit PDF sont désormais publics sur demande explicite du propriétaire. Leu
 - Défis personnels du mois calculés sur les activités manuelles correspondant au sport et aux dates. Les sorties déjà saisies du mois sont incluses. Aucun participant, classement ou cadeau collectif fictif.
 
 ## Fichiers et responsabilités
+
+- `loop-routes.js`, `loop-routes.test.cjs` : recherche bornée de boucles, contrôle de fermeture, annulation, limites de service et tests indépendants. `map.js` ajoute le mode boucle ; `routing.js` expose la limitation de requêtes pour éviter les répétitions.
+- `plateforme.css` et les 14 pages HTML : navigation commune et barre mobile ; `accueil.html` remonte les outils avant les présentations du réseau.
 
 - `sport-core.js` : fonctions pures et dépôt local versionné, exportable sous Node pour les tests. Pas de DOM ni de réseau.
 - `sport-ui.js` : vues, formulaires, interactions et export du navigateur.
