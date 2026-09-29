@@ -4,6 +4,15 @@
   const sports={running:'Running',trail:'Trail',cycling:'Vélo',mtb:'VTT',hiking:'Randonnée',fitness:'Fitness',strength:'Musculation',swimming:'Natation',outdoor:'Outdoor',other:'Autre'};
   const objectives={'10':{label:'10 km',weeks:8,minutes:20,km:8,long:70},'15':{label:'15 km',weeks:10,minutes:35,km:12,long:90},'21':{label:'Semi-marathon · 21,1 km',weeks:12,minutes:50,km:18,long:120},'42':{label:'Marathon · 42,195 km',weeks:20,minutes:90,km:40,long:150}};
   const templates=[{id:'run50',sport:'running',title:'50 km de running ce mois-ci',unit:'km',target:50},{id:'cycle100',sport:'cycling',title:'100 km à vélo ce mois-ci',unit:'km',target:100},{id:'walk3',sport:'hiking',title:'3 randonnées ce mois-ci',unit:'activities',target:3}];
+  const weekdays=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  // Pick the most evenly spaced subset if current practice allows fewer sessions.
+  function selectTrainingDays(days,count){
+    const choices=[];
+    function pick(from,result){if(result.length===count){choices.push(result);return;}for(let i=from;i<days.length;i++)pick(i+1,[...result,days[i]]);}
+    pick(0,[]);
+    const score=choice=>{const sorted=[...choice].sort((a,b)=>a-b);return sorted.reduce((sum,d,i)=>sum+Math.pow(((sorted[(i+1)%sorted.length]-d+7)%7)||7,2),0);};
+    return choices.sort((a,b)=>score(a)-score(b))[0];
+  }
   const uid=()=>root.crypto?.randomUUID?.() || 'local-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
   function today(now=new Date()){return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;}
   function day(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s||''))return NaN;const d=new Date(s+'T12:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===s?d.getTime()/86400000:NaN;}
@@ -15,6 +24,11 @@
     const frequency=number(input.sessions,2,5,'Séances par semaine');if(!Number.isInteger(frequency))throw Error('Choisis un nombre entier de séances.');
     const p={alias:String(input.alias||'').trim().slice(0,40),sport:input.sport,level:input.level,sessions:frequency,sports:[...new Set([input.sport,...(Array.isArray(input.sports)?input.sports.filter(s=>sports[s]):[])])],preferences:String(input.preferences||'').slice(0,200)};
     if(p.sport!=='running')return p;
+    if(input.trainingDays!==undefined){
+      if(!Array.isArray(input.trainingDays)||input.trainingDays.some(d=>d===''||d==null||!Number.isInteger(Number(d))||Number(d)<0||Number(d)>6))throw Error('Choisis des jours de semaine valides.');
+      p.trainingDays=[...new Set(input.trainingDays.map(Number))].sort((a,b)=>a-b);
+      if(p.trainingDays.length!==frequency)throw Error(`Choisis exactement ${frequency} jours, un par séance disponible.`);
+    }
     if(!objectives[input.objective])throw Error('Choisis une distance.');
     if(!Number.isFinite(day(input.targetDate)))throw Error('Indique une date cible valide.');
     if(!['finish','improve','performance'].includes(input.priority))throw Error('Choisis une priorité.');
@@ -40,9 +54,13 @@
     if(p.objective==='42'&&(p.sessions<4||p.currentSessions<3||!['21','42'].includes(p.experience)))reasons.push('Ce modèle marathon est limité aux sportifs ayant déjà terminé un semi et pratiquant régulièrement, avec 4 créneaux disponibles minimum.');
     if(p.weekKm>100||p.weekMinutes>750)reasons.push('Ton volume dépasse le champ de ce générateur général : une programmation individualisée est préférable.');
     if(reasons.length)return {status:'review',profile:p,reasons};
-    const id=uid();const frequency=Math.min(p.sessions,p.currentSessions+1);const schedule={2:[1,4],3:[0,2,5],4:[0,2,4,6],5:[0,1,3,4,6]}[frequency];
+    const id=uid();const frequency=Math.min(p.sessions,p.currentSessions+1);
+    const trainingDays=p.trainingDays?selectTrainingDays(p.trainingDays,frequency):null;
+    const startWeekday=new Date(start+'T12:00:00Z').getUTCDay();
+    const schedule=trainingDays?trainingDays.map(d=>(d-startWeekday+7)%7).sort((a,b)=>a-b):{2:[1,4],3:[0,2,5],4:[0,2,4,6],5:[0,1,3,4,6]}[frequency];
     const pace=p.recentMinutes?p.recentMinutes/p.recentDistance:null;
     const notes=[`${frequency} séances retenues sur ${p.sessions} créneaux disponibles ; au plus une séance supplémentaire par rapport à ton rythme actuel.`,`Le volume part de tes ${p.weekMinutes} minutes hebdomadaires déclarées, sans dépasser ta sortie la plus longue au départ.`,`Allègement toutes les quatre semaines et réduction avant l’échéance. Les durées sont des repères, à revoir selon tes sensations.`];
+    if(trainingDays){notes.push(`Jours retenus : ${schedule.map(offset=>weekdays[(startWeekday+offset)%7].toLowerCase()).join(', ')}. La course reste à ta date cible, même si elle tombe un autre jour. Aucune séance ajoutée pour compenser la fin du programme.`);if(trainingDays.some(d=>trainingDays.includes((d+1)%7)))notes.push('Certains jours choisis se suivent. Si possible, espace-les en revenant au questionnaire.');}
     if(p.targetMinutes)notes.push(`Ton souhait de ${p.targetMinutes} min est mémorisé, sans promesse de résultat ni accélération imposée pour l’atteindre.`);
     if(pace)notes.push(`Référence déclarée : ${p.recentDistance} km en ${p.recentMinutes} min. Elle sert à contextualiser ton objectif ; le programme se règle au ressenti, pas sur une allure médicale ou garantie.`);
     if(pace&&p.targetMinutes&&p.targetMinutes/Number(p.objective)<pace)notes.push('Le chrono souhaité demande une allure plus rapide que ta référence récente sur une distance égale ou plus courte. Ce programme ne valide pas sa faisabilité : revois-le avec un entraîneur.');
@@ -71,7 +89,7 @@
       }
       result.push({number:w+1,kind:last?'event':taper?'taper':recovery?'recovery':'build',plannedMinutes:workouts.reduce((s,x)=>s+(x.duration||0),0),workouts});
     }
-    return {status:'ready',profile:p,plan:{schemaVersion:1,algorithmVersion:'local-general-v1',id,userId:'local-device',sport:'running',objective:p.objective,targetDate:p.targetDate,targetMinutes:p.targetMinutes,priority:p.priority,startDate:start,duration:weeks,sessionsPerWeek:frequency,weeks:result,notes,createdAt:new Date().toISOString()}};
+    return {status:'ready',profile:p,plan:{schemaVersion:1,algorithmVersion:'local-general-v2-days',id,userId:'local-device',sport:'running',objective:p.objective,targetDate:p.targetDate,targetMinutes:p.targetMinutes,priority:p.priority,startDate:start,duration:weeks,sessionsPerWeek:frequency,trainingDays,weeks:result,notes,createdAt:new Date().toISOString()}};
   }
   function progress(plan,date=today()){
     const all=plan.weeks.flatMap(w=>w.workouts);const completed=all.filter(w=>w.completed).length;
@@ -93,6 +111,6 @@
     function update(fn){const state=read();fn(state);if(!validState(state))throw Error('Format de données invalide.');if(blocked)throw Error(issue);try{storage.setItem(key,JSON.stringify(state));memory=state;return state;}catch(e){issue='Enregistrement impossible sur cet appareil. Vérifie l’espace disponible ou les réglages du navigateur.';throw Error(issue);}}
     return {read,update,get issue(){return issue;},clear(){storage.removeItem(key);memory=empty();issue='';blocked=false;},key};
   }
-  const api={sports,objectives,templates,uid,today,day,addDays,cleanProfile,generate,progress,cleanActivity,challengeProgress,createStore,empty,validState};
+  const api={sports,objectives,templates,weekdays,uid,today,day,addDays,cleanProfile,generate,progress,cleanActivity,challengeProgress,createStore,empty,validState};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.RunSport=api;
 })(typeof globalThis!=='undefined'?globalThis:window);

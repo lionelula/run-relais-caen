@@ -11,3 +11,23 @@ test('completion uses actual checks, not calendar; overdue is distinct',()=>{con
 test('storage persists across repositories, rejects unknown schema and reports failed writes',()=>{const backing=memory(),store=C.createStore(backing);store.update(s=>s.profile=C.cleanProfile(base));assert.equal(C.createStore(backing).read().profile.alias,'Test');backing.setItem(store.key,'{"schemaVersion":100}');assert.throws(()=>store.update(s=>{}));const denied=C.createStore({getItem:()=>null,setItem(){throw Error('Quota');}});assert.throws(()=>denied.update(s=>s.goals.push({id:'1'})));assert(denied.issue);});
 test('manual activities validate real dates and allow missing distances',()=>{assert.throws(()=>C.cleanActivity({sport:'running',date:'2026-09-26',duration:30},start));assert.throws(()=>C.cleanActivity({sport:'running',date:start,duration:0},start));const a=C.cleanActivity({sport:'running',date:start,duration:30,distance:'',elevation:''},start);assert.equal(a.distance,null);assert.equal(a.source,'manual');});
 test('challenges count only matching dates and sports, not workouts',()=>{const c={sport:'running',unit:'km',target:50,startDate:'2026-09-01',endDate:'2026-09-30'};const acts=[{sport:'running',date:start,distance:8},{sport:'cycling',date:start,distance:80},{sport:'running',date:'2026-08-31',distance:10},{sport:'running',date:start,distance:null}];assert.equal(C.challengeProgress(c,acts),8);assert.equal(C.challengeProgress({...c,unit:'activities'},acts),2);});
+test('selected weekdays are honored for every start weekday and target offset, with a race-date exception',()=>{
+  for(let offset=0;offset<7;offset++)for(let tail=0;tail<7;tail++){
+    const begin=C.addDays(start,offset),targetDate=C.addDays(begin,70+tail);
+    const {plan}=C.generate({...base,trainingDays:['2','4','0'],targetDate},begin);
+    const workouts=plan.weeks.flatMap(w=>w.workouts);
+    assert(workouts.filter(w=>w.type!=='event').every(w=>[2,4,0].includes(new Date(w.date+'T12:00:00Z').getUTCDay())));
+    assert(workouts.every(w=>w.date>=begin&&w.date<=targetDate));
+    assert.equal(new Set(workouts.map(w=>w.date)).size,workouts.length);
+    assert.equal(workouts.at(-1).date,targetDate);
+    assert(plan.weeks.every(w=>w.workouts.length<=3));
+  }
+});
+test('weekday validation, lower-frequency subset and local persistence preserve chosen days',()=>{
+  for(const days of [[],[1,1,3],[1,2,7],[1,2,2.5],[1,2,null],'123'])assert.throws(()=>C.generate({...base,trainingDays:days},start));
+  const {plan,profile}=C.generate({...base,sessions:5,currentSessions:2,trainingDays:[1,2,3,4,5]},start);
+  assert.equal(plan.sessionsPerWeek,3);assert.equal(plan.trainingDays.length,3);assert(plan.trainingDays.every(d=>profile.trainingDays.includes(d)));
+  const storage=memory();C.createStore(storage).update(s=>{s.profile=profile;s.plan=plan;});
+  assert.deepEqual(C.createStore(storage).read().profile.trainingDays,[1,2,3,4,5]);
+  assert.equal(C.generate(base,start).status,'ready'); // Legacy profiles remain supported.
+});

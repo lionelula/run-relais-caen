@@ -1,5 +1,13 @@
 # Run Relais — Caen et Caen la Mer
 
+## Mise à jour du 28 septembre 2026
+
+Accueil et navigation simplifiés, avec parcours / entraînement / après-sortie et accès rapide à Mon espace. Barre de navigation fixe sur smartphone. La carte propose des boucles piétonnes depuis un départ, pour une distance souhaitée de 2 à 20 km et une direction facultative. La longueur réelle du moteur est affichée ; au-delà de 20 % d'écart, le résultat le signale. Des portions peuvent être partagées à l'aller et au retour. Aucun tracé direct fictif ne remplace une erreur du service.
+
+Le questionnaire permet de choisir ses jours d'entraînement. Ils sont conservés dans le profil et respectés par les nouvelles séances, sauf pour la course à sa date cible. Les plans existants restent inchangés. Les prix, données cartographiques et PDF publics sont conservés.
+
+Validation : 40 tests automatisés (14 domaine sportif/boucles et 26 contrôles existants de carte), 14 pages et 328 liens/ressources contrôlés. Tests reproductibles du nouveau domaine : `node --test sport.test.cjs loop-routes.test.cjs`. Essais navigateur : boucles calculées à 8,69 km pour 8 km et 11,38 km pour 10 km, enregistrement local, jours mardi/jeudi/dimanche et reprise d'un ancien plan. Ces distances sont des observations, pas des résultats garantis à chaque requête. Voir [le détail fonctionnel](architecture/compagnon-sportif.md).
+
 Prototype de réseau local pour les sportifs et les professionnels qui les accompagnent à Caen et Caen la Mer. La carte permet déjà de repérer les cafés, commerces et services utiles le long d’un trajet à pied.
 
 ## Fonctionnalités

@@ -6,8 +6,8 @@
   const store=C.createStore(storage);
   const $=s=>document.querySelector(s);
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const date=s=>Number.isFinite(C.day(s))?new Date(s+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}):'Date non renseignée';
-  const formData=form=>Object.fromEntries(new FormData(form));
+  const date=s=>Number.isFinite(C.day(s))?new Date(s+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):'Date non renseignée';
+  const formData=form=>{const data=new FormData(form),values=Object.fromEntries(data);if(form.querySelector('[name=trainingDays]'))values.trainingDays=data.getAll('trainingDays');return values;};
   function feedback(id,text,error=false){const el=document.getElementById(id);if(!el)return;el.hidden=!text;el.textContent=text;el.classList.toggle('error',error);}
   function safe(fn,id){try{fn();}catch(error){feedback(id,error.message,true);if(id==='plan-feedback')renderPlan();}}
   function empty(text){return `<div class="sport-empty">${esc(text)}</div>`;}
@@ -58,10 +58,15 @@
   const q=$('#questionnaire-form');
   if(q){
     let step=0,proposal=null;const initial=store.read();fill(q,initial.profile);$('#replace-plan-note').hidden=!initial.plan;
+    const dayInputs=[...q.querySelectorAll('[name=trainingDays]')];
+    const selectedDays=initial.profile?.trainingDays||({2:[2,6],3:[2,4,0],4:[1,3,5,0],5:[1,2,4,5,0]})[q.elements.sessions.value];
+    dayInputs.forEach(input=>input.checked=selectedDays.includes(Number(input.value)));
+    function showDayCount(){const count=dayInputs.filter(input=>input.checked).length;$('#training-days-count').textContent=`${count} jour(s) sélectionné(s) sur ${q.elements.sessions.value} à choisir. Espace-les si possible.`;}
+    q.addEventListener('change',showDayCount);showDayCount();
     q.elements.targetDate.min=C.addDays(C.today(),1);for(const type of ['input','change'])q.addEventListener(type,()=>{proposal=null;document.getElementById('plan-proposal').replaceChildren();});
-    function sportChanged(){const running=q.elements.sport.value==='running';for(const id of ['running-objective','running-baseline']){const box=document.getElementById(id);box.hidden=!running;for(const input of box.querySelectorAll('input,select'))input.disabled=!running;}$('#other-sport-message').hidden=running;}
+    function sportChanged(){const running=q.elements.sport.value==='running';for(const id of ['running-objective','running-baseline','training-days']){const box=document.getElementById(id);box.hidden=!running;for(const input of box.querySelectorAll('input,select'))input.disabled=!running;}$('#other-sport-message').hidden=running;}
     function showStep(){for(const el of q.querySelectorAll('[data-step]'))el.hidden=Number(el.dataset.step)!==step;document.querySelectorAll('.wizard-steps li').forEach((el,i)=>{if(i===step)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');});$('#wizard-back').hidden=step===0;$('#wizard-next').hidden=step===2;$('#wizard-generate').hidden=step!==2;const active=q.querySelector(`[data-step="${step}"] legend`);active.tabIndex=-1;active.focus();}
-    function validStep(){const active=q.querySelector(`[data-step="${step}"]`);for(const el of active.querySelectorAll('input,select'))if(!el.disabled&&!el.reportValidity())return false;return true;}
+    function validStep(){const active=q.querySelector(`[data-step="${step}"]`);for(const el of active.querySelectorAll('input,select'))if(!el.disabled&&!el.reportValidity())return false;if(step===0&&q.elements.sport.value==='running'&&dayInputs.filter(input=>input.checked).length!==Number(q.elements.sessions.value)){feedback('questionnaire-feedback',`Choisis exactement ${q.elements.sessions.value} jours d’entraînement.`,true);dayInputs[0].focus();return false;}feedback('questionnaire-feedback','');return true;}
     q.elements.sport.addEventListener('change',sportChanged);sportChanged();
     $('#wizard-next').addEventListener('click',()=>{if(validStep()){step++;showStep();}});$('#wizard-back').addEventListener('click',()=>{step--;showStep();});
     q.addEventListener('submit',event=>{event.preventDefault();if(step<2){if(validStep()){step++;showStep();}return;}if(!validStep())return;safe(()=>{

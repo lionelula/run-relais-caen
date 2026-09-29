@@ -11,3 +11,17 @@ fieldset{padding:0;border:0;min-width:0;margin:24px 0}legend{font-weight:700;fon
 @media(max-width:800px){.landing-hero{grid-template-columns:1fr;padding:55px 7vw;gap:35px}.site-header nav{width:100%}.site-header nav a{font-size:11px}.map-sidebar{max-height:none}.feature-grid,.community-grid{grid-template-columns:1fr}.platform-section{padding:48px 7vw}.workspace-shell{grid-template-columns:1fr;padding:24px 6vw 50px;gap:20px}.workspace-nav{position:static;display:flex;flex-wrap:wrap;padding:8px}.workspace-nav a{border:0;padding:10px}.workspace-card{padding:22px}.community-card{padding:25px}.practice-board{transform:none;padding:25px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
+.mobile-nav{display:none}
+.route-mode{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.route-mode legend{font-size:12px}.route-mode label{padding:10px;border:1px solid var(--ink);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}.route-mode label:has(input:checked){background:var(--lime)}.route-mode input{accent-color:var(--ink)}#loop-options{padding:12px;background:var(--soft);border:1px solid #b8bdb5;margin-bottom:16px}#loop-options input,#loop-options select{width:100%;min-height:42px;border:1px solid #8b938a;background:var(--paper);padding:9px;font:inherit}
+[hidden]{display:none!important}
+@media(max-width:800px){
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  .site-header{min-height:68px;padding:16px 6vw;justify-content:space-between;flex-wrap:nowrap}
+  .site-header nav{width:auto}.site-header nav a:not([href="partenaires.html"]){display:none}
+  .mobile-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:fixed;inset:auto 0 0;z-index:1200;background:var(--paper);border-top:1px solid var(--ink);padding:7px 4px calc(7px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 20px #18201e12}
+  .mobile-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:51px;text-align:center;font-size:11px;font-weight:700;border-radius:3px}
+  .mobile-nav a span{font-size:22px;line-height:1.2}.mobile-nav a[aria-current="page"]{background:var(--lime)}
+  .sport-nav a[href="compte-sportif.html"],.sport-nav a[href="mon-plan.html"],.sport-nav a[href="apres-sortie.html"]{display:none}
+  .sport-footer-links{margin-bottom:20px}
+}
+

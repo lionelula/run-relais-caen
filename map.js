@@ -42,6 +42,22 @@ let requestNumber = 0;
 let requestController = null;
 let routeBounds = null;
 let picking = null;
+let previousArrival = {...routePoints.end};
+const loopMode = () => document.querySelector('[name="route-mode"]:checked').value === 'loop';
+const calculateLabel = () => loopMode() ? 'Proposer une boucle →' : 'Calculer à pied →';
+function updateRouteMode() {
+  const loop = loopMode();
+  document.querySelector('#loop-options').hidden = !loop;
+  for (const id of ['loop-distance','loop-direction']) document.getElementById(id).disabled = !loop;
+  routeSelects.end.closest('.route-field').hidden = loop;
+  document.querySelector('#add-waypoint').hidden = loop;
+  document.querySelector('#swap-route').hidden = loop;
+  calculateButton.textContent = calculateLabel();
+}
+function editAsPoints() {
+  document.querySelector('[name="route-mode"][value="points"]').checked = true;
+  updateRouteMode();
+}
 
 function setRouteStatus(message, error = false) {
   routeStatus.textContent = message;
@@ -76,7 +92,7 @@ function renderWaypoints() {
       ['⌖', `Déplacer l’étape ${index + 1} sur la carte`, () => beginPicking(`waypoint:${index}`), false],
       ['↑', `Avancer l’étape ${index + 1}`, () => moveWaypoint(index, -1), index === 0],
       ['↓', `Reculer l’étape ${index + 1}`, () => moveWaypoint(index, 1), index === routeWaypoints.length - 1],
-      ['×', `Supprimer l’étape ${index + 1}`, () => { routeWaypoints.splice(index, 1); updateSelects(); calculateRoute(); }, false]
+      ['×', `Supprimer l’étape ${index + 1}`, () => { editAsPoints(); routeWaypoints.splice(index, 1); updateSelects(); calculateRoute(); }, false]
     ];
     controls.forEach(([label, name, action, disabled]) => {
       const button = textElement('button', label); button.type = 'button';
@@ -88,6 +104,7 @@ function renderWaypoints() {
 }
 
 function moveWaypoint(index, offset) {
+  editAsPoints();
   const target = index + offset;
   if (target < 0 || target >= routeWaypoints.length) return;
   [routeWaypoints[index], routeWaypoints[target]] = [routeWaypoints[target], routeWaypoints[index]];
@@ -95,6 +112,7 @@ function moveWaypoint(index, offset) {
 }
 
 function beginPicking(key) {
+  if (key !== 'start') editAsPoints();
   stopPicking(); invalidateRoute(); picking = key;
   if (key === 'start' || key === 'end') document.querySelector(`#pick-${key}`).setAttribute('aria-pressed', 'true');
   if (key === 'new') document.querySelector('#add-waypoint').setAttribute('aria-pressed', 'true');
@@ -126,7 +144,8 @@ function invalidateRoute() {
   routeResult.hidden = true;
   routeBounds = null;
   calculateButton.disabled = false;
-  calculateButton.textContent = 'Calculer à pied →';
+  calculateButton.textContent = calculateLabel();
+  document.querySelector('#cancel-loop').hidden = true;
   showEndpointMarkers(routeCoordinates());
 }
 
@@ -150,21 +169,39 @@ async function calculateRoute() {
   stopPicking();
   invalidateRoute();
   const currentRequest = requestNumber;
+  const wantsLoop = loopMode();
   const start = [...routePoints.start.coordinates], end = [...routePoints.end.coordinates];
-  const via = routeWaypoints.map(point => [...point.coordinates]);
+  let via = routeWaypoints.map(point => [...point.coordinates]);
   const cacheKey = JSON.stringify([start, ...via, end]);
   const controller = new AbortController();
   requestController = controller;
   let timedOut = false;
-  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 18000);
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, wantsLoop ? 50000 : 18000);
   calculateButton.disabled = true;
   calculateButton.textContent = 'Calcul en cours…';
   setRouteStatus('Recherche d’un chemin accessible à pied…');
+  document.querySelector('#cancel-loop').hidden = !wantsLoop;
   try {
-    WalkingRoutes.buildRequest(start, end, via);
-    const route = routeCache.get(cacheKey) || await WalkingRoutes.requestRoute(start, end, controller.signal, undefined, via);
+    let route, proposal;
+    if (wantsLoop) {
+      proposal = await LoopRoutes.propose(start, Number(document.querySelector('#loop-distance').value), {
+        heading: document.querySelector('#loop-direction').value, bounds: caenLaMerArea,
+        places: nearbySnapshot?.places || [], signal: controller.signal,
+        onProgress: attempt => { if(currentRequest === requestNumber) setRouteStatus(`Recherche d’une boucle piétonne · essai ${attempt}/4…`); }
+      });
+      route = proposal.route;
+    } else {
+      WalkingRoutes.buildRequest(start, end, via);
+      route = routeCache.get(cacheKey) || await WalkingRoutes.requestRoute(start, end, controller.signal, undefined, via);
+    }
     if (currentRequest !== requestNumber) return;
-    if (!routeCache.has(cacheKey)) {
+    if (proposal) {
+      via = proposal.via;
+      routePoints.end = {id:null,coordinates:[...start],label:'Retour au départ'};
+      routeWaypoints.splice(0,routeWaypoints.length,...via.map((coordinates,i)=>({id:null,coordinates,label:`Étape proposée ${i+1}`})));
+      updateSelects();
+    }
+    if (!wantsLoop && !routeCache.has(cacheKey)) {
       if (routeCache.size >= 20) routeCache.delete(routeCache.keys().next().value);
       routeCache.set(cacheKey, route);
     }
@@ -188,7 +225,7 @@ async function calculateRoute() {
     }));
     routeResult.hidden = false;
     window.dispatchEvent(new CustomEvent('run-relais-route-ready', {detail:{stops:routeCoordinates(),coordinates:route.points,kilometers:route.kilometers,routingProfile:'pedestrian'}}));
-    setRouteStatus(`Trajet piéton calculé${via.length ? ` avec ${via.length} étape${via.length > 1 ? 's' : ''}` : ''} · suis la ligne verte.`);
+    setRouteStatus(proposal ? `Boucle piétonne de ${distanceLabel(route.kilometers)} pour ${proposal.target} km demandés.${proposal.error > .2 ? ' La meilleure proposition trouvée s’écarte de plus de 20 % de ta cible. Essaie une autre direction ou un autre départ.' : ' Distance indicative : suis le tracé vert.'} Des portions peuvent être parcourues dans les deux sens.` : `Trajet piéton calculé${via.length ? ` avec ${via.length} étape${via.length > 1 ? 's' : ''}` : ''} · suis la ligne verte.`);
     fitRoute();
     loadNearby(route.points);
   } catch (error) {
@@ -202,7 +239,8 @@ async function calculateRoute() {
     if (currentRequest === requestNumber) {
       requestController = null;
       calculateButton.disabled = false;
-      calculateButton.textContent = 'Calculer à pied →';
+      calculateButton.textContent = calculateLabel();
+      document.querySelector('#cancel-loop').hidden = true;
     }
   }
 }
@@ -211,9 +249,10 @@ for (const key of ['start', 'end']) {
   routeSelects[key].addEventListener('change', () => {
     const place = routePlaces.find(place => place.id === routeSelects[key].value);
     if (place) routePoints[key] = { id: place.id, coordinates: [...place.coordinates] };
+    if (loopMode()) { routePoints.end = {id:null,coordinates:[...routePoints.start.coordinates],label:'Retour au départ'}; routeWaypoints.splice(0); }
     updateSelects();
     stopPicking(); invalidateRoute();
-    setRouteStatus('Points modifiés. Clique sur « Calculer à pied ».');
+    setRouteStatus('Départ modifié. Lance le calcul du parcours.');
   });
   document.querySelector(`#pick-${key}`).addEventListener('click', () => {
     beginPicking(key);
@@ -230,10 +269,20 @@ map.on('click', (event) => {
   if (picking === 'new') routeWaypoints.push(selected);
   else if (picking.startsWith('waypoint:')) routeWaypoints[Number(picking.split(':')[1])] = selected;
   else routePoints[picking] = selected;
+  if (loopMode()) { routePoints.end = {id:null,coordinates:[...routePoints.start.coordinates],label:'Retour au départ'}; routeWaypoints.splice(0); }
   updateSelects();
   calculateRoute();
 });
 document.querySelector('#route-form').addEventListener('submit', event => { event.preventDefault(); calculateRoute(); });
+document.querySelectorAll('[name="route-mode"]').forEach(input=>input.addEventListener('change',()=>{
+  stopPicking();
+  if(loopMode()) { previousArrival={...routePoints.end};routeWaypoints.splice(0);routePoints.end={id:null,coordinates:[...routePoints.start.coordinates],label:'Retour au départ'}; }
+  else if(!routeWaypoints.length) routePoints.end={...previousArrival};
+  updateRouteMode();updateSelects();invalidateRoute();
+  setRouteStatus(loopMode()?'Choisis ton départ, ta distance et lance la recherche de boucle.':'Choisis tes points puis lance le calcul piéton.');
+}));
+for(const id of ['loop-distance','loop-direction'])document.getElementById(id).addEventListener('input',()=>{stopPicking();invalidateRoute();setRouteStatus('Préférences modifiées. Relance la recherche de boucle.');});
+document.querySelector('#cancel-loop').addEventListener('click',()=>{invalidateRoute();setRouteStatus('Recherche annulée. Tu peux choisir une autre distance ou direction.');});
 document.querySelector('#swap-route').addEventListener('click', () => {
   [routePoints.start, routePoints.end] = [routePoints.end, routePoints.start];
   routeWaypoints.reverse();
@@ -354,6 +403,7 @@ function placePopup(place) {
   source.href = place.source; source.target = '_blank'; source.rel = 'noreferrer'; popup.append(source);
   const go = textElement('button','Choisir comme arrivée →','nearby-go'); go.type = 'button';
   go.addEventListener('click', () => {
+    editAsPoints();
     routePoints.end = {id:null, label:place.name, coordinates:[...place.coordinates]};
     updateSelects(); map.closePopup(); calculateRoute();
     document.querySelector('#route-title').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -361,6 +411,7 @@ function placePopup(place) {
   popup.append(go);
   const via = textElement('button', 'Ajouter comme étape →', 'nearby-go'); via.type = 'button';
   via.addEventListener('click', () => {
+    editAsPoints();
     routeWaypoints.push({id:null, label:place.name, coordinates:[...place.coordinates]});
     updateSelects(); map.closePopup(); calculateRoute();
     document.querySelector('#route-title').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -463,5 +514,5 @@ updateSelects();
       if (Array.isArray(snapshot.places) && snapshot.bounds?.length === 4 && Number.isFinite(snapshot.savedAt)) nearbySnapshot = snapshot;
     }
   } catch { /* Optional local extract; online search remains available. */ }
-  calculateRoute();
+  if (requestNumber === 0) calculateRoute();
 })();

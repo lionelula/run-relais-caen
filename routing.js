@@ -68,7 +68,7 @@
     const url = endpoint + '?json=' + encodeURIComponent(JSON.stringify(request));
     const response = await fetcher(url, { signal, headers: { 'X-Client-Id': 'run-relais-caen-prototype' } });
     if (!response.ok) {
-      if (response.status === 429) throw new Error('Le service est très sollicité. Réessaie dans un moment.');
+      if (response.status === 429) { const error = new Error('Le service est très sollicité. Réessaie dans un moment.'); error.status = 429; throw error; }
       if (response.status === 400) throw new Error('Aucun chemin piéton trouvé. Choisis des points plus proches des rues ou sentiers.');
       throw new Error('Le service de calcul est indisponible. Réessaie dans un moment.');
     }
