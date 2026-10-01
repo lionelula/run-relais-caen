@@ -1,5 +1,9 @@
 # Run Relais — Caen et Caen la Mer
 
+## Mode sombre — 1er octobre 2026
+
+Un bouton « Sombre » dans l'en-tête des 14 pages permet de basculer entre les thèmes clair et sombre. Au premier affichage, le site suit la préférence de l'appareil ; un choix manuel est conservé dans ce navigateur et partagé entre les onglets. Le thème est appliqué avant le chargement des styles. Les cartes, fenêtres de lieux, formulaires et encarts sont adaptés ; l'impression garde la palette claire. Le bouton fonctionne aussi sans stockage disponible, sans persistance dans ce cas. Vérifications : trois tests du thème, contrôle des 14 pages et de leurs 356 liens et ressources, essais visuels sur ordinateur et téléphone. Tests : `node --test theme.test.cjs`.
+
 ## Mise à jour du 28 septembre 2026
 
 Accueil et navigation simplifiés, avec parcours / entraînement / après-sortie et accès rapide à Mon espace. Barre de navigation fixe sur smartphone. La carte propose des boucles piétonnes depuis un départ, pour une distance souhaitée de 2 à 20 km et une direction facultative. La longueur réelle du moteur est affichée ; au-delà de 20 % d'écart, le résultat le signale. Des portions peuvent être partagées à l'aller et au retour. Aucun tracé direct fictif ne remplace une erreur du service.

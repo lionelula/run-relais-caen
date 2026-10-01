@@ -1,0 +1,49 @@
+/* Shared appearance switch. Accent colours keep their dark lettering. */
+:root{color-scheme:light;--on-accent:#18201e;--deep:#18201e}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex-shrink:0;min-height:44px;padding:9px 12px;border:1px solid var(--ink);border-radius:24px;background:var(--paper);color:var(--ink);font:11px 'DM Mono',monospace;cursor:pointer}
+.theme-toggle [data-theme-icon]{font:20px/1 Arial,sans-serif}
+.theme-toggle:hover{background:var(--soft)}
+.theme-toggle[aria-pressed=true]{border-color:var(--lime)}
+.theme-toggle:focus-visible{outline:3px solid var(--green);outline-offset:4px}
+@media(min-width:801px){.site-header nav{margin-left:auto}}
+@media(max-width:800px){.site-header{gap:10px}.site-header nav{margin-left:auto}.theme-toggle{width:44px;padding:8px}.theme-toggle .theme-label{display:none}}
+@media screen{
+  :root[data-theme=dark]{color-scheme:dark;--ink:#f2f4e9;--paper:#141c19;--soft:#202c25;--muted:#adb9b0;--green:#7fd2a3;--blue:#223d4c;--pink:#462c3b}
+  html[data-theme=dark] :is(.site-header,footer,.sport-hero,.page-hero,.landing-hero,.professional-invite,.sport-card,.workspace-card,.community-card,.plan,.training-card,.sport-week,.location-list,.location-card,.route-planner,.waypoint-row,.sport-list-item,.sport-stats>div,.training-card details,.prototype-banner,.local-notice,.pricing-note,.choice-grid label,.route-mode label,.filter-chip,.button,.sport-field input,.sport-field select,.sport-field textarea,.route-field select,.training-filters select,.mobile-nav,.map-overlay,.status-tag){border-color:#667c6d}
+  html[data-theme=dark] :is(.concept-band,.practice-board,.community-card.dark,.sport-card.dark,.pro-intro,.pro-contact,.sport-nav,.training-cover){background:var(--deep);color:var(--ink)}
+  html[data-theme=dark] :is(.sport-card.dark p,.concept-copy p){color:#d5ded4}
+  html[data-theme=dark] :is(.brand b,.button.lime,.plan.featured,.plan-badge,.featured .pro-badge,.territory-label,.walking-badge,.nearby-count,.nearby-go,.filter-chip.active,.sport-tag,.sport-feedback,.training-access strong,.training-cover>b,.recovery-marker){color:var(--on-accent)}
+  html[data-theme=dark] :is(.route-mode label:has(input:checked),.choice-grid label:has(input:checked),.mobile-nav a[aria-current=page],.sport-nav a[aria-current=page],.sport-nav a:hover,.workspace-nav a:hover){color:var(--on-accent)}
+  html[data-theme=dark] :is(.sport-tag.planned,.sport-tag.recovery){color:var(--ink)}
+  html[data-theme=dark] :is(.plan.featured .description,.plan.featured .price,.plan.featured .plan-label,.plan.featured h3,.plan.featured li){color:var(--on-accent)}
+  html[data-theme=dark] .plan.featured ul{border-color:var(--on-accent)}
+  html[data-theme=dark] :is(.plan .button,.header-action,#calculate-route){background:var(--lime);color:var(--on-accent)}
+  html[data-theme=dark] :is(.unavailable,.plan .button.unavailable,.plan .button.disabled){background:var(--soft);color:var(--muted)}
+  html[data-theme=dark] .plan.featured :is(.button.unavailable,.button.disabled){background:#c6d5a2;color:#25321e}
+  html[data-theme=dark] :is(.route-planner,.sidebar-note){background:var(--soft)}
+  html[data-theme=dark] :is(.sidebar-note,.route-status,.place-status,.place-popup .tag){color:var(--green)}
+  html[data-theme=dark] .route-status.error{color:#ffad9b}
+  html[data-theme=dark] .sport-feedback.error{background:#522d25;color:#ffe5dc}
+  html[data-theme=dark] .project-examples li{background:var(--soft)}
+  html[data-theme=dark] :is(input,select,textarea,button){color:inherit}
+  html[data-theme=dark] :is(.choice-grid input,.route-mode input,.check-row input){accent-color:#267a53}
+  html[data-theme=dark] :is(.pick-point,.recenter,#swap-route,.waypoint-actions button){color:var(--ink)}
+  html[data-theme=dark] :is(.pick-point[aria-pressed=true],#add-waypoint[aria-pressed=true]){color:var(--on-accent)}
+  html[data-theme=dark] :is(.point-letter,.route-endpoint){background:var(--deep);color:#fff}
+  html[data-theme=dark] :is(.point-letter.end,.route-endpoint.end){background:#267a53}
+  html[data-theme=dark] .route-endpoint.via{background:var(--lime);color:var(--on-accent)}
+  /* Only the base tiles are dimmed; paths and place markers stay distinct. */
+  html[data-theme=dark] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) saturate(.55) brightness(.85) contrast(.9)}
+  html[data-theme=dark] :is(.map-area,.leaflet-container){background:var(--soft)}
+  html[data-theme=dark] :is(.leaflet-popup-content-wrapper,.leaflet-popup-tip,.map-overlay,.leaflet-control-attribution,.leaflet-bar a){background:var(--paper);color:var(--ink)}
+  html[data-theme=dark] .leaflet-control-attribution a{color:var(--green)}
+  html[data-theme=dark] .leaflet-container a.leaflet-popup-close-button{color:var(--ink)}
+  html[data-theme=dark] :is(.nearby-marker,.place-marker,.recovery-marker){color:var(--on-accent);border-color:var(--on-accent)}
+  html[data-theme=dark] .nearby-marker.services{background:#bee6ff}
+  html[data-theme=dark] :is(.nearby-go,.button.lime,.plan.featured,.filter-chip.active){border-color:var(--on-accent)}
+  html[data-theme=dark] :is(a,button,input,select,textarea,summary):focus-visible{outline-color:var(--green)}
+}
+@media print{
+  .theme-toggle,.mobile-nav{display:none!important}
+  :root{--ink:#18201e;--paper:#fffdf6;--soft:#efede5;--muted:#65706a;--green:#489c73;--blue:#bee6ff;--pink:#ffb2cc;color-scheme:light!important}
+}
