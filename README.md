@@ -1,5 +1,9 @@
 # Run Relais — Caen et Caen la Mer
 
+## Lancement gratuit — 1er octobre 2026
+
+Toutes les fonctionnalités actuellement disponibles restent accessibles gratuitement, sans abonnement. Les pages sportifs et professionnels affichent les abonnements comme « Prochainement » ; leurs tarifs futurs restent conservés dans le catalogue d'architecture, mais ne sont plus présentés comme des offres souscriptibles. Le premier mois offert est annoncé pour les futures formules mensuelles Adhérent, Développeur, Visible et Recommandé ; Référence reste une offre personnalisée en préparation. Les tarifs après le mois offert et les conditions devront être présentés avant toute souscription. Aucun abonnement, essai chronométré, conversion automatique ou paiement n'est activé. Les comptes professionnels et prestations partenaires restent en préparation ; la gratuité du lancement ne les rend pas disponibles. Un lieu répertorié dans OpenStreetMap n'est pas automatiquement partenaire.
+
 ## Mode sombre — 1er octobre 2026
 
 Un bouton « Sombre » dans l'en-tête des 14 pages permet de basculer entre les thèmes clair et sombre. Au premier affichage, le site suit la préférence de l'appareil ; un choix manuel est conservé dans ce navigateur et partagé entre les onglets. Le thème est appliqué avant le chargement des styles. Les cartes, fenêtres de lieux, formulaires et encarts sont adaptés ; l'impression garde la palette claire. Le bouton fonctionne aussi sans stockage disponible, sans persistance dans ce cas. Vérifications : trois tests du thème, contrôle des 14 pages et de leurs 356 liens et ressources, essais visuels sur ordinateur et téléphone. Tests : `node --test theme.test.cjs`.
