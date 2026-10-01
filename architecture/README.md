@@ -1,5 +1,11 @@
 # Architecture cible — réseau local pour sportifs
 
+## Décision de lancement gratuit — 1er octobre 2026
+
+Les fonctionnalités disponibles sont gratuites pendant le lancement. Les abonnements sont affichés comme « Prochainement » ; les montants du catalogue restent des tarifs futurs envisagés, sans souscription ouverte. `plans.json.launch` indique l'accès gratuit et l'absence de conversion automatique. `introductoryOffer` décrit un premier mois offert, prévu pour Adhérent, Développeur, Visible et Recommandé lors de l'ouverture de leurs abonnements mensuels. Aucune période d'essai ne démarre à la visite du site ou à l'utilisation des fonctions locales. Référence, formule personnalisée, n'est pas incluse dans cette offre mensuelle.
+
+Avant ouverture, définir les bénéficiaires et conditions, le calcul du mois offert, le tarif après cette période, les modalités de renouvellement et d'annulation et l'information préalable. La souscription devra résulter d'un choix explicite avec présentation des conditions ; aucun utilisateur du lancement gratuit ne sera converti automatiquement. Cette décision ne met en service ni compte professionnel, ni partenariat, ni outil publicitaire. Le référencement informatif et la validation de l'établissement restent distincts de la facturation. Un partenariat pilote gratuit validé devra pouvoir exister sans abonnement payant ; après ouverture, l'abonnement autorisera les prestations payantes réellement souscrites.
+
 Évolution du 25 septembre : le [compagnon sportif local](compagnon-sportif.md) remplace l'aperçu sportif par un espace persistant dans le navigateur. Il reste sans compte ni serveur. Les paragraphes de phase 1 ci-dessous décrivent l'étape antérieure ; consulter cette évolution et `sport-domain.d.ts` pour l'état actuel du sportif. Les prix restent inchangés.
 
 Cette spécification prépare les phases 2 à 5. Elle n’est ni un backend, ni une authentification, ni une intégration Stripe. Les interfaces TypeScript ne sont pas chargées par le site. `plans.json` décrit le catalogue prévu ; les montants sont exprimés en centimes. Aucun identifiant de paiement ni secret n’est configuré.
@@ -30,7 +36,7 @@ Flux à implémenter après choix du prestataire : utilisateur authentifié → 
 
 Prévoir la validation des signatures des notifications, leur traitement idempotent, les échecs de paiement, changements de formule, annulations, remboursements et la réconciliation. Les secrets et identifiants privés resteront côté serveur. Aucun champ de carte ni mot de passe en clair ne sera stocké par le projet. Le prestataire devra gérer la saisie bancaire, les renouvellements et l’accès aux factures. Vérifier sa documentation officielle à jour au moment de l’intégration ; aucun endpoint de paiement simulé n’est livré ici.
 
-Le passage `verified` → `partner` exige une validation éditoriale en cours de validité et un abonnement professionnel actif confirmé côté serveur. La fin d’un abonnement retire les mises en avant payantes sans effacer le lieu OSM. Le statut `inactive` permet de suspendre un établissement ; l’accès payant et la vérification demeurent deux dimensions distinctes.
+Le passage `verified` → `partner` exige l'accord de participation de l'établissement et une validation éditoriale en cours de validité. Un partenariat pilote gratuit ne nécessite pas d'abonnement payant. Les mises en avant payantes exigent séparément un abonnement professionnel actif confirmé côté serveur après l'ouverture. La fin d’un abonnement retire ces mises en avant sans effacer le lieu OSM ni automatiquement retirer son accord de partenariat. Le statut `inactive` permet de suspendre un établissement ; l’accès payant et la vérification demeurent deux dimensions distinctes.
 
 ## Phases 4 et 5
 

@@ -11,7 +11,8 @@
       "currency": "EUR",
       "period": "free",
       "providerPriceId": null,
-      "trainingPlanAccess": "public"
+      "trainingPlanAccess": "public",
+      "availability": "available"
     },
     {
       "id": "adherent",
@@ -21,7 +22,8 @@
       "currency": "EUR",
       "period": "month",
       "providerPriceId": null,
-      "trainingPlanAccess": "public"
+      "trainingPlanAccess": "public",
+      "availability": "planned"
     },
     {
       "id": "developpeur",
@@ -31,7 +33,8 @@
       "currency": "EUR",
       "period": "month",
       "providerPriceId": null,
-      "trainingPlanAccess": "public"
+      "trainingPlanAccess": "public",
+      "availability": "planned"
     },
     {
       "id": "discovery",
@@ -40,7 +43,8 @@
       "amountCents": 0,
       "currency": "EUR",
       "period": "free",
-      "providerPriceId": null
+      "providerPriceId": null,
+      "availability": "available"
     },
     {
       "id": "visible",
@@ -49,7 +53,8 @@
       "amountCents": 1900,
       "currency": "EUR",
       "period": "month",
-      "providerPriceId": null
+      "providerPriceId": null,
+      "availability": "planned"
     },
     {
       "id": "recommended",
@@ -58,7 +63,8 @@
       "amountCents": 4900,
       "currency": "EUR",
       "period": "month",
-      "providerPriceId": null
+      "providerPriceId": null,
+      "availability": "planned"
     },
     {
       "id": "reference",
@@ -67,7 +73,26 @@
       "amountCents": null,
       "currency": "EUR",
       "period": "custom",
-      "providerPriceId": null
+      "providerPriceId": null,
+      "availability": "planned"
     }
-  ]
+  ],
+  "launch": {
+    "phase": "free",
+    "availableFeaturesAccess": "free",
+    "paidSubscriptionsAvailability": "coming_soon",
+    "automaticConversion": false
+  },
+  "introductoryOffer": {
+    "status": "planned",
+    "durationMonths": 1,
+    "appliesTo": [
+      "adherent",
+      "developpeur",
+      "visible",
+      "recommended"
+    ],
+    "activation": "explicit_subscription_at_opening",
+    "termsAvailability": "before_subscription"
+  }
 }
