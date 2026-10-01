@@ -30,7 +30,7 @@ Les huit PDF sont désormais publics sur demande explicite du propriétaire. Leu
 - `sport.css` : composants et responsive qui réutilisent les variables/polices du site.
 - `questionnaire.html`, `mon-plan.html`, `apres-sortie.html`, `communaute.html` : nouvelles vues.
 - `compte-sportif.html` : tableau de bord local, en remplacement de son ancien aperçu tout en conservant profil, favoris, parcours, avantages, abonnement et paiements futurs.
-- `apres-sortie.js` : recherche locale et carte séparée, sans requête Overpass ni GPS.
+- `apres-sortie.js` : recherche locale et carte séparée, sans requête Overpass ; localisation ponctuelle facultative via `geolocation.js`.
 - `sport-map.js` et événements `run-relais-route-ready/clear` dans `map.js` : sauvegarde explicite du parcours et lien vers l'après-sortie. La restauration d'un parcours valide ses arrêts puis utilise le calcul piéton existant.
 - Accueil, connexion, choix de compte, formules sportifs et catalogue PDF : liens intégrés, sans remplacement des autres pages.
 - `sport-domain.d.ts` complète `domain.d.ts` sans casser les contrats existants. `ActivityRecord` évite un conflit avec le type de sport `Activity` existant.
@@ -49,7 +49,7 @@ Prévoir contrôle des propriétaires, validation serveur, transactions d'inscri
 
 ## Services externes
 
-La carte existante utilise Leaflet/OSM et Valhalla pour les trajets piétons. Après ma sortie utilise les tuiles OSM mais filtre les lieux localement. Si Leaflet échoue, la liste et les champs de coordonnées restent utilisables. Aucun GPS, service météo, montre connectée, notification ou Stripe n'est ajouté. GPS futur : action explicite, permission, précision et date, refus/expiration de permission, absence de collecte en arrière-plan par défaut.
+La carte existante utilise Leaflet/OSM et Valhalla pour les trajets piétons. Après ma sortie utilise les tuiles OSM mais filtre les lieux localement. Si Leaflet échoue, la liste et les champs de coordonnées restent utilisables. La localisation ponctuelle est disponible sur action explicite, avec permission du navigateur et précision affichée. Elle ne crée aucun tracé d’activité, aucun suivi en arrière-plan et aucun enregistrement automatique. Les refus, erreurs, délais et positions hors zone sont signalés. Aucun service météo, montre connectée, notification ou Stripe n'est ajouté.
 
 ## Limites du générateur et sources
 
