@@ -8,9 +8,23 @@
   if(query.has('lat')&&query.has('lon')&&lat>=49.04&&lat<=49.35&&lon>=-.59&&lon<=-.13)point=[lat,lon];
   form.elements.latitude.value=point[0];form.elements.longitude.value=point[1];
   const activity=store.read().activities.find(a=>a.id===query.get('activity'));
-  if(activity)document.getElementById('after-activity-summary').textContent=`Bien joué ! Ta sortie ${C.sports[activity.sport]} du ${date(activity.date)} est enregistrée : ${activity.duration} min${activity.distance!=null?' · '+activity.distance+' km':''}. Choisis maintenant ton point d’arrivée ; aucune position GPS n’a été enregistrée.`;
-  if(window.L){map=L.map('recovery-map').setView(point,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);markers=L.layerGroup().addTo(map);origin=L.circleMarker(point,{radius:9,color:'#18201e',fillColor:'#ff765e',fillOpacity:1}).addTo(map).bindTooltip('Point de recherche choisi · pas une position GPS');map.on('click',event=>{if(event.latlng.lat<49.04||event.latlng.lat>49.35||event.latlng.lng<-.59||event.latlng.lng>-.13){status.textContent='Choisis un point dans la zone Caen / Caen la Mer couverte par ce relevé.';return;}point=[Number(event.latlng.lat.toFixed(6)),Number(event.latlng.lng.toFixed(6))];form.elements.latitude.value=point[0];form.elements.longitude.value=point[1];origin.setLatLng(point);search();});}
+  if(activity)document.getElementById('after-activity-summary').textContent=`Bien joué ! Ta sortie ${C.sports[activity.sport]} du ${date(activity.date)} est enregistrée : ${activity.duration} min${activity.distance!=null?' · '+activity.distance+' km':''}. Choisis maintenant ton point d’arrivée ; aucune position GPS n’est associée à cette activité.`;
+  if(window.L){map=L.map('recovery-map').setView(point,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);markers=L.layerGroup().addTo(map);origin=L.circleMarker(point,{radius:9,color:'#18201e',fillColor:'#ff765e',fillOpacity:1}).addTo(map).bindTooltip('Point de recherche choisi · pas une position GPS');map.on('click',event=>{if(event.latlng.lat<49.04||event.latlng.lat>49.35||event.latlng.lng<-.59||event.latlng.lng>-.13){status.textContent='Choisis un point dans la zone Caen / Caen la Mer couverte par ce relevé.';return;}point=[Number(event.latlng.lat.toFixed(6)),Number(event.latlng.lng.toFixed(6))];form.elements.latitude.value=point[0];form.elements.longitude.value=point[1];origin.setLatLng(point).bindTooltip("Point de recherche choisi sur la carte");search();});}
   else document.getElementById('recovery-map').innerHTML='<p class="sport-empty">La carte n’a pas pu être chargée. La recherche par coordonnées et la liste des lieux restent disponibles.</p>';
+  let myPositionLayer=null;
+  RunLocation.bindControl({
+    buttons:[document.getElementById('recovery-locate')],status:document.getElementById('recovery-location-status'),
+    bounds:{south:49.04,north:49.35,west:-.59,east:-.13},clearButton:document.getElementById('recovery-clear-position'),
+    onClear(){myPositionLayer?.remove();myPositionLayer=null;},
+    onPosition(result,inArea){
+      if(map)myPositionLayer=RunLocation.drawPosition(L,map,result);
+      if(!inArea)return;
+      point=result.coordinates.map(value=>Number(value.toFixed(6)));
+      form.elements.latitude.value=point[0];form.elements.longitude.value=point[1];
+      origin?.setLatLng(point).bindTooltip('Point de recherche choisi à partir de ma position');
+      search();
+    }
+  });
   document.getElementById('recovery-categories').innerHTML=Object.entries(kinds).map(([key,value])=>`<button class="filter-chip ${key===kind?'active':''}" type="button" aria-pressed="${key===kind}" data-kind="${key}">${value.label}${value.service?' · à vérifier':''}</button>`).join('');
   function render(){const favorites=store.read().favorites;results.innerHTML=matches.slice(0,shown).map(p=>`<article class="sport-list-item"><span class="sport-tag planned">${esc(p.label)} · OpenStreetMap</span><h3>${esc(p.name)}</h3><p>≈ ${Math.round(p.distance)} m à vol d’oiseau du point choisi</p><p>${esc(p.address)}</p>${p.access?`<p>${esc(p.access)}</p>`:''}${p.fee?`<p>${esc(p.fee)}</p>`:''}<p>Disponibilité et services à vérifier sur place. Aucun partenariat présumé.</p>${sourceLink(p.source)?`<a href="${esc(p.source)}" target="_blank" rel="noreferrer">Source du lieu ↗</a>`:''}<div><button class="sport-link" type="button" data-favorite-place="${esc(p.id)}" ${favorites.some(f=>f.id===p.id)?'disabled':''}>${favorites.some(f=>f.id===p.id)?'Enregistré dans mes favoris':'Ajouter à mes favoris locaux'}</button></div></article>`).join('');document.getElementById('recovery-more').hidden=shown>=matches.length;}
   function search(){
@@ -26,7 +40,7 @@
     if(markers)for(const p of matches){const popup=document.createElement('div');const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=`${p.label} · ≈ ${Math.round(p.distance)} m à vol d’oiseau. Source OpenStreetMap ; disponibilité à vérifier.`;popup.append(title,note);L.marker(p.coordinates,{icon:L.divIcon({className:'recovery-marker',html:esc(p.icon),iconSize:[32,32]})}).bindPopup(popup).addTo(markers);}
     render();
   }
-  form.addEventListener('submit',event=>{event.preventDefault();point=[Number(form.elements.latitude.value),Number(form.elements.longitude.value)];origin?.setLatLng(point);map?.setView(point,15);search();});
+  form.addEventListener('submit',event=>{event.preventDefault();point=[Number(form.elements.latitude.value),Number(form.elements.longitude.value)];origin?.setLatLng(point).bindTooltip("Point de recherche choisi par coordonnées");map?.setView(point,15);search();});
   document.getElementById('recovery-categories').addEventListener('click',event=>{const button=event.target.closest('[data-kind]');if(!button)return;kind=button.dataset.kind;for(const b of document.querySelectorAll('[data-kind]')){b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));}search();});
   results.addEventListener('click',event=>{const button=event.target.closest('[data-favorite-place]');if(!button)return;const p=matches.find(p=>p.id===button.dataset.favoritePlace);if(!p)return;try{favorite({id:p.id,name:p.name,coordinates:p.coordinates,address:p.address,source:p.source,category:p.category});render();status.textContent='Lieu ajouté aux favoris de cet appareil. Aucun partenariat ni service supplémentaire n’est déduit.';}catch(error){status.textContent=error.message;}});
   document.getElementById('recovery-more').addEventListener('click',()=>{shown+=12;render();});

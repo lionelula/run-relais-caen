@@ -159,6 +159,13 @@ Sur demande explicite de l'utilisateur, les huit PDF sont publiés en accès lib
 
 Le nouvel espace sportif remplace son ancien aperçu : profil, objectifs, questionnaire, programme running adapté, suivi des séances, sorties manuelles, favoris et défis personnels. Les cinq vues principales sont `compte-sportif.html`, `questionnaire.html`, `mon-plan.html`, `apres-sortie.html` et `communaute.html`. [Architecture et limites](architecture/compagnon-sportif.md).
 
-Les séances cochées ne créent pas de kilomètres fictifs. Les défis se basent sur les sorties réellement saisies. Les événements restent des brouillons privés sur l'appareil, sans inscription ni publication. Aucune offre partenaire inventée, aucune récupération GPS. Les données personnelles ne sont jamais envoyées par ces formulaires ; elles restent dans le navigateur et sont exportables/effaçables.
+Les séances cochées ne créent pas de kilomètres fictifs. Les défis se basent sur les sorties réellement saisies. Les événements restent des brouillons privés sur l'appareil, sans inscription ni publication. Aucune offre partenaire inventée, aucun tracé GPS d’activité importé. La localisation ponctuelle de la carte est facultative et déclenchée par un clic. Les données personnelles ne sont jamais envoyées par ces formulaires ; elles restent dans le navigateur et sont exportables/effaçables.
 
 Vérification locale : 34 tests passent (8 nouveaux contrôles du domaine sportif et 26 contrôles existants de carte/routage), 14 pages et 298 liens/ressources valides. Les cinq vues sportives sont contrôlées à 390 px sans débordement horizontal. Génération/adoption, rechargement des séances cochées, saisie liée, défi et favori ont été testés dans le navigateur sur une origine de test séparée. Tests du domaine reproductibles : `node --test sport.test.cjs`.
+
+
+## Localisation ponctuelle
+
+Sur la carte, « Ma position » affiche un point bleu et le cercle de précision. « Utiliser comme départ » choisit ce point ; les coordonnées sont envoyées au service de routage uniquement au calcul du trajet. Après ma sortie, le même bouton recherche les lieux localement autour de la position. Aucun appel de géolocalisation au chargement, aucun `watchPosition`, aucun stockage automatique. Une sauvegarde explicite du parcours peut enregistrer ses points, comme pour tout parcours. HTTPS (ou localhost), permission du navigateur et localisation de l’appareil nécessaires. Les tests utilisent des positions simulées, pas la localisation réelle de l’utilisateur.
+
+Vérification : `node --test geolocation.test.cjs` ; [documentation navigateur](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition).

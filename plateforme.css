@@ -29,3 +29,6 @@ fieldset{padding:0;border:0;min-width:0;margin:24px 0}legend{font-weight:700;fon
   .sport-footer-links{margin-bottom:20px}
 }
 
+
+.location-card-panel{border:1px solid var(--ink);background:var(--soft);padding:16px;margin:24px 0}.location-card-panel h2{font-size:20px;letter-spacing:-.5px;margin-bottom:14px}.location-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.location-actions .button{gap:10px;min-height:44px;cursor:pointer;background:var(--paper);color:var(--ink)}.location-actions .button.lime{background:var(--lime)}.location-actions .button:disabled{opacity:.55;cursor:not-allowed}.location-actions .text-button,#recovery-clear-position{min-height:44px;margin-top:0}.location-status{font-size:13px;line-height:1.6;color:var(--ink);margin:14px 0 0}.location-status.error{color:var(--coral)}.location-note{font-size:11px;line-height:1.6;color:var(--muted);margin:10px 0 0}.locate-map{position:absolute;z-index:500;right:13px;top:15px;width:44px;height:44px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);font-size:27px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}.locate-map[aria-busy="true"]{background:var(--lime)}.my-location-dot{filter:drop-shadow(0 1px 3px #0006)}
+@media(max-width:520px){.map-overlay.top{max-width:calc(100% - 88px);line-height:1.6}.location-actions .button{width:100%;justify-content:center}}

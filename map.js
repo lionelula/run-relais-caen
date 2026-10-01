@@ -157,6 +157,34 @@ function stopPicking() {
   for (const key of ['start', 'end']) document.querySelector(`#pick-${key}`).setAttribute('aria-pressed', 'false');
 }
 
+// Geolocation centres the map. Routing starts only after a separate user action.
+let myPosition = null, myPositionLayer = null;
+const usePosition = document.querySelector('#use-my-position');
+RunLocation.bindControl({
+  buttons: [document.querySelector('#locate-position'), document.querySelector('#locate-map')],
+  status: document.querySelector('#location-status'), bounds: caenLaMerArea,
+  clearButton: document.querySelector('#clear-my-position'),
+  onClear() {
+    myPosition = null; myPositionLayer?.remove(); myPositionLayer = null;
+    usePosition.hidden = true; usePosition.disabled = true;
+  },
+  onPosition(result, inArea) {
+    myPosition = result; myPositionLayer = RunLocation.drawPosition(L, map, result);
+    usePosition.hidden = false; usePosition.disabled = !inArea;
+  }
+});
+usePosition.addEventListener('click', () => {
+  if (!myPosition || !RunLocation.inside(myPosition.coordinates, caenLaMerArea)) return;
+  stopPicking();
+  routePoints.start = { id: null, coordinates: [...myPosition.coordinates], label: 'Ma position (départ choisi)' };
+  if (loopMode()) {
+    routePoints.end = { id: null, coordinates: [...myPosition.coordinates], label: 'Retour au départ' };
+    routeWaypoints.splice(0);
+  }
+  updateSelects(); invalidateRoute();
+  setRouteStatus('Ta position est choisie comme départ. Lance le calcul piéton quand tu es prêt.');
+});
+
 function fitRoute() {
   if (routeBounds) map.fitBounds(routeBounds, { padding: [55, 70], maxZoom: 17 });
 }
